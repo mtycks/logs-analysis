@@ -6,6 +6,9 @@ import psycopg2
 
 DBNAME = "news"
 
+def main():
+    exportResults()
+
 def getMostPop():
   """Return the three most popular articles of all time"""
 
@@ -63,6 +66,33 @@ def getPopAuthors():
 
     return author_views
 
+def getPageErrors():
+    """ Return a list of dates that had more than 1% of request errors """
+
+    db = psycopg2.connect(database=DBNAME)
+    c = db.cursor()
+    c.execute("""
+
+
+    select log_errors.day, log_errors.total_errors, totals.total_requests
+        from log_errors,
+            (select date_trunc('day', time) as day, count(*) as total_requests
+                from log
+                group by day) as totals
+        where totals.day = log_errors.day;
+
+    """)
+    list = c.fetchall()
+    db.close()
+
+    #loop through the results and print them row-by-row
+    error_list = 'These days saw more than 1 present of their requests return an error: \n'
+    for row in list:
+        day = row[0]
+        percentage = row[1];
+        error_list += u"%s - %s%% errors " % (day, percentage)
+
+    return error_list
 
 def exportResults():
     """Create a plain text file with all the results"""
@@ -71,3 +101,6 @@ def exportResults():
     f.write(getMostPop())
     f.write(getPopAuthors())
     f.close()
+
+if __name__== "__main__":
+    main()
