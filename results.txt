@@ -9,3 +9,7 @@ Ursula La Multa - 507,594 views
 Rudolf von Treppenwitz - 423,457 views 
 Anonymous Contributor - 170,098 views 
 Markoff Chaney - 84,557 views 
+
+
+These days saw more than 1 percent of their requests return an error: 
+July 17, 2016 - 2.3% errors 
