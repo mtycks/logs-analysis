@@ -73,13 +73,13 @@ def getPageErrors():
     c = db.cursor()
     c.execute("""
 
-
-    select log_errors.day, log_errors.total_errors, totals.total_requests
+    select log_errors.day, log_errors.total_errors, totals.total_requests, round((log_errors.total_errors * 100.0) / totals.total_requests, 2) as percent
         from log_errors,
             (select date_trunc('day', time) as day, count(*) as total_requests
                 from log
                 group by day) as totals
-        where totals.day = log_errors.day;
+        where totals.day = log_errors.day
+        order by percent desc;
 
     """)
     list = c.fetchall()
