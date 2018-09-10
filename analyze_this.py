@@ -2,12 +2,15 @@
 
 import psycopg2
 from datetime import datetime
+import os
 
 DBNAME = "news"
 
 
 def main():
     exportResults()
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    print("File exported: %s/results.txt" % dir_path)
 
 
 def getMostPop():
@@ -16,11 +19,7 @@ def getMostPop():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute(""" select articles.id, articles.title, views from articles,
-    (select count(*) as views, replace(path, '/article/', '') as slug from log
-      where status = '200 OK'
-          and path != '/'
-      group by slug
-      order by views desc) as log
+    article_views as log
           where log.slug = articles.slug
           limit 3; """)
     articles = c.fetchall()
@@ -45,12 +44,7 @@ def getPopAuthors():
     c = db.cursor()
     c.execute("""
     select authors.name, SUM(views) as total_views from articles,
-        (select count(*) as views,
-            replace(path, '/article/', '') as slug from log
-        where status = '200 OK'
-            and path != '/'
-        group by slug
-        order by views desc) as log,
+        article_views as log,
         authors
             where log.slug = articles.slug
             and articles.author = authors.id
@@ -98,7 +92,7 @@ def getPageErrors():
     db.close()
 
     # loop through the results and print them row-by-row
-    error_list = 'Days with more than 1%% of their requests as errors: \n'
+    error_list = 'Days with more than 1% of their requests as errors: \n'
     for row in list:
         day = row[0].strftime("%B %d, %Y")
         percentage = row[1]
