@@ -100,9 +100,6 @@ python analyze_this.py
 ``` import psycopg2 ```
 Let's first import Psycopg so we can access our PostgreSQL database.
 
-``` from datetime import datetime ```
-Then we need to import the datetime module from the datetime class to be able to format dates in our output.
-
 ``` import os ```
 Lastly, we'll import the OS class to be able to print the file path of the created file.
 
@@ -114,7 +111,7 @@ select articles.title, views from articles,
         where log.path = '/article/' || articles.slug
         limit 3;
 ```
-My PostgreSQL query selects the ID and title from the **articles** table and selects the views from the **article_views** view that I created to aggregate the total views of each article.
+My PostgreSQL query selects title from the **articles** table and selects the views from the **article_views** view that I created to aggregate the total views of each article.
 
 ``` python
 pops = 'The three most popular articles of all time: \n'

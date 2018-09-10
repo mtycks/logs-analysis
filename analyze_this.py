@@ -2,7 +2,6 @@
 # Command line program to analyze newspaper visitor logs
 
 import psycopg2
-from datetime import datetime
 import os
 
 DBNAME = "news"
