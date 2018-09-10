@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-# Command line program to analyze newspaper visitor logs
+"""Command line program to analyze newspaper visitor logs."""
 
 import psycopg2
 import os
@@ -8,14 +8,14 @@ DBNAME = "news"
 
 
 def main():
+    """Execute the exportResults() method and print where the file is exported to."""
     exportResults()
     dir_path = os.path.dirname(os.path.realpath(__file__))
     print("File exported: %s/results.txt" % dir_path)
 
 
 def getMostPop():
-    """Return the three most popular articles of all time"""
-
+    """Return the three most popular articles of all time."""
     query = """ select articles.title, views from articles,
     article_views as log
           where log.path = '/article/' || articles.slug
@@ -33,8 +33,7 @@ def getMostPop():
 
 
 def getPopAuthors():
-    """ Return a list of authors sorted by views """
-
+    """Return a list of authors sorted by views."""
     query = """
     select authors.name, SUM(views) as total_views from articles,
         article_views as log,
@@ -57,8 +56,7 @@ def getPopAuthors():
 
 
 def getPageErrors():
-    """ Return a list of dates that had more than 1% of request errors """
-
+    """Return a list of dates that had more than 1% of request errors ."""
     query = """
         select day, percentages.percent from
             (select log_errors.day,
@@ -85,9 +83,7 @@ def getPageErrors():
 
 
 def execute_query(query):
-    """
-    execute_query takes an SQL query as a parameter,
-    executes the query and returns the results as a list of tuples.
+    """execute_query takes an SQL query as a parameter, executes the query and returns the results as a list of tuples.
 
     args:
       query - (string) an SQL query statement to be executed.
@@ -107,8 +103,7 @@ def execute_query(query):
         print(error)
 
 def exportResults():
-    """Create a plain text file with all the results"""
-
+    """Create a plain text file with all the results."""
     f = open('results.txt', 'w')
     f.write(getMostPop())
     f.write(getPopAuthors())
