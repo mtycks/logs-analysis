@@ -1,17 +1,63 @@
-# logs-analysis
 # Logs Analysis project for Udacity
+This command line Python program generates a plain text report that answers the following questions for a fictional news site:
++ What are the three most popular articles of all time based on view count?
++ Who are the most popular article authors of all time?
++ Which days had more than one percent of traffic return an error?
 
-## Imports
-``` import psycopg2 ```
-Let's first import Psycopg so we can access our PostgreSQL database.
+To find the answers, this Python program uses psycopg2 to query a PostgreSQL database. The mock database includes three tables:
++ Articles - a list of all the articles
+**+ author - integer
+**+ title - text
+**+ slug - text
+**+ lead - text
+**+ body - text
+**+ time - timestamp with time zone
+**+ id - integer
++ Authors - a list of all the Authors
+**+ name - text
+**+ bio - text
+**+ id - integer
++ Log - a list of all the times a page was accessed
+**+ path - text
+**+ ip - inet
+**+ method - text
+**+ status - text
+**+ time - timestamp with time zone
+**+ id - integer
 
-``` from datetime import datetime ```
-Then we need to import the datetime module from the datetime class to be able to format dates in our output.
+## Requirements
+#### VirtualBox
+To run this program, you'll need a VirtualBox running Linux.
++ [Download it from virtualbox.org](https://www.virtualbox.org/wiki/Download_Old_Builds_5_1)
++ Install the platform package for your operating system (you don't need the extension pack or the SDK)
 
-``` import os ```
-Lastly, we'll import the OS class to be able to print the file path of the created file.
+#### Vagrant + configuration files
+You'll also need to install Vagrant, which is the software that configures the Virtual Box and let's you use files that are on your computer and the Virtual Box.
++ [Download it from vagrantup.com](https://www.vagrantup.com/downloads.html)
++ Install the version for your operating system
++ [Download the VM configuration here](https://s3.amazonaws.com/video.udacity-data.com/topher/2018/April/5acfbfa3_fsnd-virtual-machine/fsnd-virtual-machine.zip)
+**+ Unzip and cd into the directory (FSND-Virtual-Machine) using your terminal
+**+ cd into the *vagrant* directory
 
-## SQL views created
+#### Start virtual machine
+Once you've completed the steps above, you can start your virtual machine:
++ From the vagrant directory, use `vagrant up`
++ Once `vagrant up` finishes (it might take several minutes) run `vagrant ssh` to log in to your new Linux virtual machine.
+
+#### Download and load the database
+You can download the `newsdata.sql` database [here](https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip)
++ Unzip the file after download
++ Place the `newsdata.sql` file in the `vagrant` directory that is shared with your virtual machine
++ `cd` into the vagrant directory and run the following command to load the data: `psql -d news -f newsdata.sql`
+
+#### Add the SQL views
+This program relies on two SQL views. After you've created and loaded the database and the data, run these commands to add the SQL views:
+
+```
+psql news
+```
+Connect to the database
+
 ``` sql
 create view article_views as
 select count(*) as views, replace(path, '/article/', '') as slug from log
@@ -34,6 +80,29 @@ create view log_errors as
 ```
 
 The above view creates a column for each day regardless of time and totals all the errors for one day into another column.
+
+
+## Run it!
+Navigate to wherever you unzipped the FSND-Virtual-Machine directory.
++ `cd` into the `vagrant` directory
++ Add `analyze_this.py` (I have added mine to a subdirectory called `logs-analysis`) and run the program...
+
+```
+python analyze_this.py
+```
+
+---
+**The following is an explanation of how the program was designed.**
+
+## Imports
+``` import psycopg2 ```
+Let's first import Psycopg so we can access our PostgreSQL database.
+
+``` from datetime import datetime ```
+Then we need to import the datetime module from the datetime class to be able to format dates in our output.
+
+``` import os ```
+Lastly, we'll import the OS class to be able to print the file path of the created file.
 
 
 ## getMostPop()
