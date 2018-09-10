@@ -109,21 +109,19 @@ Lastly, we'll import the OS class to be able to print the file path of the creat
 
 ## getMostPop()
 ``` sql
-select articles.id, articles.title, views from articles,
+select articles.title, views from articles,
   article_views as log
-        where log.slug = articles.slug
+        where log.path = '/article/' || articles.slug
         limit 3;
 ```
 My PostgreSQL query selects the ID and title from the **articles** table and selects the views from the **article_views** view that I created to aggregate the total views of each article.
 
 ``` python
 pops = 'The three most popular articles of all time: \n'
-    for row in articles:
-        title = row[1]
-        views = "{:,}".format(row[2])
-        pops += u"\"%s\" - %s views \n" % (title, views)
+for title, views in articles:
+    pops += ('"{}" - {:,} views\n'.format(title, views))
 
-    pops += "\n\n"
+pops += "\n\n"
 ```
 
 Once we get the list from the query, we loop through it to create a readable list for our output.
@@ -133,7 +131,7 @@ Once we get the list from the query, we loop through it to create a readable lis
 select authors.name, SUM(views) as total_views from articles,
       article_views as log,
       authors
-          where log.slug = articles.slug
+          where log.path = '/article/' || articles.slug
           and articles.author = authors.id
           group by authors.name
           order by total_views desc;
@@ -142,12 +140,10 @@ The above query joins the articles and authors table along with the article_view
 
 ``` python
 author_views = 'Most popular article authors of all time: \n'
-    for row in articles:
-        name = row[0]
-        views = "{:,}".format(row[1])
-        author_views += u"%s - %s views \n" % (name, views)
+for name, total_views in articles:
+    author_views += ('"{}" - {:,} views\n'.format(name, total_views))
 
-    author_views += "\n\n"
+author_views += "\n\n"
 ```
 
 Once we get the list from the query, we loop through it to create a readable list for our output.
@@ -156,20 +152,18 @@ Once we get the list from the query, we loop through it to create a readable lis
 # getPageErrors()
 ``` sql
 select day, percentages.percent from
-  (select log_errors.day,
-      log_errors.total_errors,
-      totals.total_requests,
-      round((
-          log_errors.total_errors * 100.0) /
-              totals.total_requests, 1)
-              as percent
-      from log_errors,
-          (select date_trunc('day', time) as day,
-              count(*) as total_requests
-              from log
-              group by day) as totals
-      where totals.day = log_errors.day) as percentages
-  where percent > 1;
+    (select log_errors.day,
+        round((
+            log_errors.total_errors * 100.0) /
+                totals.total_requests, 1)
+                as percent
+        from log_errors,
+            (select to_char(time, 'FMMonth DD, YYYY') as day,
+                count(*) as total_requests
+                from log
+                group by day) as totals
+        where totals.day = log_errors.day) as percentages
+    where percent > 1;
 ```
 The above query uses two subqueries and a view to accomplish its output.
 
@@ -179,10 +173,8 @@ Finally, the query uses a `where` conditional to only show days with an error pe
 
 ``` python
 error_list = 'Days with more than 1% of their requests as errors: \n'
-    for row in list:
-        day = row[0].strftime("%B %d, %Y")
-        percentage = row[1]
-        error_list += u"%s - %s%% errors " % (day, percentage)
+  for day, percent in list:
+      error_list += ('{} - {}% errors'.format(day, percent))
 ```
 
 Once we get the list from the query, we loop through it to create a readable list for our output.
