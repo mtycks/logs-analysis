@@ -19,7 +19,7 @@ def getMostPop():
 
     query = """ select articles.title, views from articles,
     article_views as log
-          where log.slug = articles.slug
+          where log.path = '/article/' || articles.slug
           limit 3; """
     articles = execute_query(query)
 
@@ -40,7 +40,7 @@ def getPopAuthors():
     select authors.name, SUM(views) as total_views from articles,
         article_views as log,
         authors
-            where log.slug = articles.slug
+            where log.path = '/article/' || articles.slug
             and articles.author = authors.id
             group by authors.name
             order by total_views desc;

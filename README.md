@@ -58,12 +58,14 @@ psql news
 ```
 Connect to the database
 
+---
+
 ``` sql
 create view article_views as
-select count(*) as views, replace(path, '/article/', '') as slug from log
+select count(*) as views, path from log
     where status = '200 OK'
         and path != '/'
-    group by slug
+    group by path
     order by views desc;
 ```
 
