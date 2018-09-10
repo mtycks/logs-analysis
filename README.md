@@ -1,7 +1,7 @@
 # logs-analysis
-#Logs Analysis project for Udacity
+# Logs Analysis project for Udacity
 
-##Imports
+## Imports
 ```import psycopg2```
 Let's first import Psycopg so we can access our PostgreSQL database.
 
@@ -11,7 +11,7 @@ Then we need to import the datetime module from the datetime class to be able to
 ```import os```
 Lastly, we'll import the OS class to be able to print the file path of the created file.
 
-##SQL views created
+## SQL views created
 ```create view article_views as
 select count(*) as views, replace(path, '/article/', '') as slug from log
     where status = '200 OK'
@@ -71,7 +71,7 @@ The above query joins the articles and authors table along with the article_view
 Once we get the list from the query, we loop through it to create a readable list for our output.
 
 
-#getPageErrors()
+# getPageErrors()
 ```select day, percentages.percent from
         (select log_errors.day,
             log_errors.total_errors,
@@ -101,5 +101,5 @@ Finally, the query uses a `where` conditional to only show days with an error pe
 
 Once we get the list from the query, we loop through it to create a readable list for our output.
 
-##exportResults()
+## exportResults()
 This function creates a text file for our output and calls each previous function in order to write the results to the file.
