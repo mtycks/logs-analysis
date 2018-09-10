@@ -27,7 +27,7 @@ The above view creates a table that totals each article's views in a column and 
 
 ``` sql
 create view log_errors as
-  select date_trunc('day', time) as day, count(*) as total_errors
+  select to_char(time, 'FMMonth DD, YYYY') as day, count(*) as total_errors
       from log
       where status != '200 OK'
       group by day;

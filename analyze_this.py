@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 # Command line program to analyze newspaper visitor logs
 
 import psycopg2
@@ -18,7 +19,7 @@ def getMostPop():
 
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute(""" select articles.id, articles.title, views from articles,
+    c.execute(""" select articles.title, views from articles,
     article_views as log
           where log.slug = articles.slug
           limit 3; """)
@@ -27,10 +28,8 @@ def getMostPop():
 
     # loop through the results and print them row-by-row
     pops = 'The three most popular articles of all time: \n'
-    for row in articles:
-        title = row[1]
-        views = "{:,}".format(row[2])
-        pops += u"\"%s\" - %s views \n" % (title, views)
+    for title, views in articles:
+        pops += ('"{}" - {:,} views\n'.format(title, views))
 
     pops += "\n\n"
 
@@ -74,14 +73,12 @@ def getPageErrors():
     c.execute("""
         select day, percentages.percent from
             (select log_errors.day,
-                log_errors.total_errors,
-                totals.total_requests,
                 round((
                     log_errors.total_errors * 100.0) /
                         totals.total_requests, 1)
                         as percent
                 from log_errors,
-                    (select date_trunc('day', time) as day,
+                    (select to_char(time, 'FMMonth DD, YYYY') as day,
                         count(*) as total_requests
                         from log
                         group by day) as totals
@@ -94,7 +91,7 @@ def getPageErrors():
     # loop through the results and print them row-by-row
     error_list = 'Days with more than 1% of their requests as errors: \n'
     for row in list:
-        day = row[0].strftime("%B %d, %Y")
+        day = row[0]
         percentage = row[1]
         error_list += u"%s - %s%% errors " % (day, percentage)
 
