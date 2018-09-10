@@ -17,14 +17,11 @@ def main():
 def getMostPop():
     """Return the three most popular articles of all time"""
 
-    db = psycopg2.connect(database=DBNAME)
-    c = db.cursor()
-    c.execute(""" select articles.title, views from articles,
+    query = """ select articles.title, views from articles,
     article_views as log
           where log.slug = articles.slug
-          limit 3; """)
-    articles = c.fetchall()
-    db.close()
+          limit 3; """
+    articles = execute_query(query)
 
     # loop through the results and print them row-by-row
     pops = 'The three most popular articles of all time: \n'
@@ -39,9 +36,7 @@ def getMostPop():
 def getPopAuthors():
     """ Return a list of authors sorted by views """
 
-    db = psycopg2.connect(database=DBNAME)
-    c = db.cursor()
-    c.execute("""
+    query = """
     select authors.name, SUM(views) as total_views from articles,
         article_views as log,
         authors
@@ -49,16 +44,13 @@ def getPopAuthors():
             and articles.author = authors.id
             group by authors.name
             order by total_views desc;
-    """)
-    articles = c.fetchall()
-    db.close()
+    """
+    articles = execute_query(query)
 
     # loop through the results and print them row-by-row
     author_views = 'Most popular article authors of all time: \n'
-    for row in articles:
-        name = row[0]
-        views = "{:,}".format(row[1])
-        author_views += u"%s - %s views \n" % (name, views)
+    for name, total_views in articles:
+        author_views += ('"{}" - {:,} views\n'.format(name, total_views))
 
     author_views += "\n\n"
 
@@ -68,9 +60,7 @@ def getPopAuthors():
 def getPageErrors():
     """ Return a list of dates that had more than 1% of request errors """
 
-    db = psycopg2.connect(database=DBNAME)
-    c = db.cursor()
-    c.execute("""
+    query = """
         select day, percentages.percent from
             (select log_errors.day,
                 round((
@@ -84,19 +74,38 @@ def getPageErrors():
                         group by day) as totals
                 where totals.day = log_errors.day) as percentages
             where percent > 1;
-    """)
-    list = c.fetchall()
-    db.close()
+    """
+    list = execute_query(query)
 
     # loop through the results and print them row-by-row
     error_list = 'Days with more than 1% of their requests as errors: \n'
-    for row in list:
-        day = row[0]
-        percentage = row[1]
-        error_list += u"%s - %s%% errors " % (day, percentage)
+    for day, percent in list:
+        error_list += ('{} - {}% errors'.format(day, percent))
 
     return error_list
 
+
+def execute_query(query):
+    """
+    execute_query takes an SQL query as a parameter,
+    executes the query and returns the results as a list of tuples.
+
+    args:
+      query - (string) an SQL query statement to be executed.
+
+    returns:
+      A list of tuples containing the results of the query.
+    """
+    try:
+        db = psycopg2.connect(database=DBNAME)
+        c = db.cursor()
+        c.execute(query)
+        result = c.fetchall()
+        db.close()
+        return result
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
 def exportResults():
     """Create a plain text file with all the results"""

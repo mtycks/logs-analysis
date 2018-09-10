@@ -5,11 +5,11 @@ The three most popular articles of all time:
 
 
 Most popular article authors of all time: 
-Ursula La Multa - 507,594 views 
-Rudolf von Treppenwitz - 423,457 views 
-Anonymous Contributor - 170,098 views 
-Markoff Chaney - 84,557 views 
+"Ursula La Multa" - 507,594 views
+"Rudolf von Treppenwitz" - 423,457 views
+"Anonymous Contributor" - 170,098 views
+"Markoff Chaney" - 84,557 views
 
 
 Days with more than 1% of their requests as errors: 
-July 17, 2016 - 2.3% errors 
+July 17, 2016 - 2.3% errors
