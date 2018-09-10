@@ -6,24 +6,24 @@ This command line Python program generates a plain text report that answers the 
 
 To find the answers, this Python program uses psycopg2 to query a PostgreSQL database. The mock database includes three tables:
 + Articles - a list of all the articles
-..+ author - integer
-..+ title - text
-..+ slug - text
-..+ lead - text
-..+ body - text
-..+ time - timestamp with time zone
-..+ id - integer
+⋅⋅+ author - integer
+⋅⋅+ title - text
+⋅⋅+ slug - text
+⋅⋅+ lead - text
+⋅⋅+ body - text
+⋅⋅+ time - timestamp with time zone
+⋅⋅+ id - integer
 + Authors - a list of all the Authors
-..+ name - text
-..+ bio - text
-..+ id - integer
+⋅⋅+ name - text
+⋅⋅+ bio - text
+⋅⋅+ id - integer
 + Log - a list of all the times a page was accessed
-..+ path - text
-..+ ip - inet
-..+ method - text
-..+ status - text
-..+ time - timestamp with time zone
-..+ id - integer
+⋅⋅+ path - text
+⋅⋅+ ip - inet
+⋅⋅+ method - text
+⋅⋅+ status - text
+⋅⋅+ time - timestamp with time zone
+⋅⋅+ id - integer
 
 ## Requirements
 #### VirtualBox
@@ -36,8 +36,8 @@ You'll also need to install Vagrant, which is the software that configures the V
 + [Download it from vagrantup.com](https://www.vagrantup.com/downloads.html)
 + Install the version for your operating system
 + [Download the VM configuration here](https://s3.amazonaws.com/video.udacity-data.com/topher/2018/April/5acfbfa3_fsnd-virtual-machine/fsnd-virtual-machine.zip)
-..+ Unzip and cd into the directory (FSND-Virtual-Machine) using your terminal
-..+ cd into the *vagrant* directory
+⋅⋅+ Unzip and cd into the directory (FSND-Virtual-Machine) using your terminal
+⋅⋅+ cd into the *vagrant* directory
 
 #### Start virtual machine
 Once you've completed the steps above, you can start your virtual machine:
