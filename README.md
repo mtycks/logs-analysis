@@ -12,12 +12,14 @@ Then we need to import the datetime module from the datetime class to be able to
 Lastly, we'll import the OS class to be able to print the file path of the created file.
 
 ## SQL views created
-``` create view article_views as
+``` sql
+create view article_views as
 select count(*) as views, replace(path, '/article/', '') as slug from log
     where status = '200 OK'
         and path != '/'
     group by slug
-    order by views desc; ```
+    order by views desc;
+```
 
 The above view creates a table that totals each article's views in a column and also creates a column for each article's slug.
 
