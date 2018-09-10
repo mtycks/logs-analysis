@@ -36,7 +36,7 @@ create view log_errors as
 The above view creates a column for each day regardless of time and totals all the errors for one day into another column.
 
 
-##getMostPop()
+## getMostPop()
 ``` sql
 select articles.id, articles.title, views from articles,
   article_views as log
@@ -57,7 +57,7 @@ pops = 'The three most popular articles of all time: \n'
 
 Once we get the list from the query, we loop through it to create a readable list for our output.
 
-##getPopAuthors()
+## getPopAuthors()
 ``` sql
 select authors.name, SUM(views) as total_views from articles,
       article_views as log,
